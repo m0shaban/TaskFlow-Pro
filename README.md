@@ -209,6 +209,42 @@ python fix_migrations.py
 python fix_database.py
 ```
 
+## 🧪 أدوات التشخيص والاختبار
+
+### اختبار شامل للنظام
+```powershell
+# اختبار اتصال قاعدة البيانات وإنشاء التطبيق
+python test_database.py
+```
+
+### فحص متغيرات البيئة
+```powershell
+# اختبار WSGI والمتغيرات البيئية
+python wsgi.py
+```
+
+### أدوات التشخيص للمشاكل الشائعة:
+
+**1. مشكلة Internal Server Error:**
+- راجع ملف `TROUBLESHOOTING.md` للحلول المفصلة
+- تأكد من ضبط `SECRET_KEY` و `DATABASE_URL`
+
+**2. مشاكل قاعدة البيانات:**
+```powershell
+# اختبار الاتصال فقط
+python -c "from test_database import test_database_connection; test_database_connection()"
+```
+
+**3. فحص صحة التطبيق:**
+```powershell
+# اختبار Flask app
+python -c "from test_database import test_flask_app; test_flask_app()"
+```
+
+**4. إعدادات النشر:**
+- راجع ملفات `DEPLOYMENT.md` و `RENDER_DEPLOY.md`
+- تأكد من وجود جميع الملفات المطلوبة: `Procfile`, `wsgi.py`, `build.sh`
+
 ## 🔐 الأمان
 
 - تشفير كلمات المرور باستخدام Werkzeug
