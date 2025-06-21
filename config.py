@@ -12,10 +12,14 @@ class Config:
     
     # Security Configuration
     SECRET_KEY = os.environ.get('SECRET_KEY') or 'taskflow-pro-secret-key-2025'
-    
-    # Database Configuration
+      # Database Configuration
     SQLALCHEMY_DATABASE_URI = os.environ.get('DATABASE_URL') or \
         'sqlite:///' + os.path.join(basedir, 'app.db')
+    
+    # Fix for PostgreSQL URL format on Render
+    if SQLALCHEMY_DATABASE_URI and SQLALCHEMY_DATABASE_URI.startswith('postgres://'):
+        SQLALCHEMY_DATABASE_URI = SQLALCHEMY_DATABASE_URI.replace('postgres://', 'postgresql://', 1)
+    
     SQLALCHEMY_TRACK_MODIFICATIONS = False
     
     # Authentication Configuration
