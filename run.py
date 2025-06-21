@@ -120,4 +120,9 @@ def reset_migrations():
     print("Migration reset complete")
 
 if __name__ == '__main__':
-    app.run(debug=True)
+    import os
+    # للتطوير المحلي
+    if os.environ.get('FLASK_ENV') == 'production':
+        app.run(host='0.0.0.0', port=int(os.environ.get('PORT', 5000)), debug=False)
+    else:
+        app.run(debug=True)
