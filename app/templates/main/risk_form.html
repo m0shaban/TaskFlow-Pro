@@ -1,0 +1,104 @@
+{% extends "main/base.html" %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-lg-8 col-md-10">
+        <div class="animate__animated animate__fadeIn">
+            <nav aria-label="breadcrumb" class="mb-3">
+                <ol class="breadcrumb">
+                    <li class="breadcrumb-item"><a href="{{ url_for('main.index') }}">الرئيسية</a></li>
+                    <li class="breadcrumb-item"><a href="{{ url_for('main.risks') }}">المخاطر</a></li>
+                    <li class="breadcrumb-item active" aria-current="page">{{ 'تعديل المخاطرة' if risk else 'مخاطرة جديدة' }}</li>
+                </ol>
+            </nav>
+        </div>
+
+        <div class="card animate__animated animate__fadeInUp">
+            <div class="card-header bg-gradient-primary text-white p-4">
+                <div class="d-flex align-items-center">
+                    <div class="me-3">
+                        <div class="rounded-circle bg-white bg-opacity-25 p-3 text-center" style="width: 60px; height: 60px;">
+                            <i class="fas fa-exclamation-triangle fa-2x text-white"></i>
+                        </div>
+                    </div>
+                    <div>
+                        <h2 class="mb-0">{{ 'تعديل المخاطرة' if risk else 'إضافة مخاطرة جديدة' }}</h2>
+                        <p class="mb-0 text-white-50">{{ 'للمشروع: ' + project.name }}</p>
+                    </div>
+                </div>
+            </div>
+            <div class="card-body p-4">
+                <form method="POST" class="needs-validation" novalidate>
+                    {{ form.hidden_tag() }}
+                    
+                    <div class="mb-4">
+                        {{ form.title.label(class="form-label fw-bold") }}
+                        {{ form.title(class="form-control", placeholder="أدخل عنوان المخاطرة") }}
+                        {% if form.title.errors %}
+                            <div class="invalid-feedback d-block">
+                                {% for error in form.title.errors %}
+                                    <i class="fas fa-exclamation-circle me-1"></i>{{ error }}
+                                {% endfor %}
+                            </div>
+                        {% endif %}
+                    </div>
+                    
+                    <div class="mb-4">
+                        {{ form.description.label(class="form-label fw-bold") }}
+                        {{ form.description(class="form-control", rows=4, placeholder="وصف للمخاطرة وأثرها المحتمل...") }}
+                        {% if form.description.errors %}
+                            <div class="invalid-feedback d-block">
+                                {% for error in form.description.errors %}
+                                    <i class="fas fa-exclamation-circle me-1"></i>{{ error }}
+                                {% endfor %}
+                            </div>
+                        {% endif %}
+                    </div>
+                    
+                    <div class="row mb-4">
+                        <div class="col-md-6">
+                            {{ form.status.label(class="form-label fw-bold") }}
+                            {{ form.status(class="form-select") }}
+                            {% if form.status.errors %}
+                                <div class="invalid-feedback d-block">
+                                    {% for error in form.status.errors %}
+                                        <i class="fas fa-exclamation-circle me-1"></i>{{ error }}
+                                    {% endfor %}
+                                </div>
+                            {% endif %}
+                        </div>
+                        <div class="col-md-6">
+                            {{ form.due_date.label(class="form-label fw-bold") }}
+                            {{ form.due_date(class="form-control", type="date") }}
+                            {% if form.due_date.errors %}
+                                <div class="invalid-feedback d-block">
+                                    {% for error in form.due_date.errors %}
+                                        <i class="fas fa-exclamation-circle me-1"></i>{{ error }}
+                                {% endfor %}
+                                </div>
+                            {% endif %}
+                        </div>
+                    </div>
+                    
+                    <div class="mb-4">
+                        {{ form.mitigation_plan.label(class="form-label fw-bold") }}
+                        {{ form.mitigation_plan(class="form-control", rows=4, placeholder="خطة التخفيف من أثر المخاطرة...") }}
+                        {% if form.mitigation_plan.errors %}
+                            <div class="invalid-feedback d-block">
+                                {% for error in form.mitigation_plan.errors %}
+                                    <i class="fas fa-exclamation-circle me-1"></i>{{ error }}
+                                {% endfor %}
+                            </div>
+                        {% endif %}
+                    </div>
+                    
+                    <div class="d-grid gap-2">
+                        {{ form.submit(class="btn btn-primary btn-lg py-3") }}
+                        <a href="{{ url_for('main.risks') }}" class="btn btn-outline-secondary">إلغاء</a>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

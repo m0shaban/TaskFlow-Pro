@@ -1,0 +1,103 @@
+{% extends "main/base.html" %}
+
+{% block content %}
+<div class="row">
+    <div class="col-md-4">
+        <div class="card mb-4">
+            <div class="card-header bg-primary text-white">
+                <h5 class="card-title mb-0">User Profile</h5>
+            </div>
+            <div class="card-body text-center">
+                <div class="mb-3">
+                    <i class="fas fa-user-circle fa-5x text-muted"></i>
+                </div>
+                <h4>{{ user.username }}</h4>
+                <p class="text-muted">{{ user.email }}</p>
+                
+                {% if user.role.name == 'ADMIN' %}
+                    <div class="badge bg-danger mb-2">Admin</div>
+                {% elif user.role.name == 'MANAGER' %}
+                    <div class="badge bg-warning text-dark mb-2">Manager</div>
+                {% else %}
+                    <div class="badge bg-info mb-2">User</div>
+                {% endif %}
+                
+                {% if user.department %}
+                    <p><strong>Department:</strong> {{ user.department.name }}</p>
+                {% endif %}
+                
+                <p><strong>Member since:</strong> {{ user.created_at.strftime('%Y-%m-%d') }}</p>
+                
+                {% if current_user.id == user.id or current_user.is_admin() %}
+                    <a href="{{ url_for('auth.edit_user', user_id=user.id) }}" class="btn btn-primary">
+                        <i class="fas fa-edit me-1"></i>Edit Profile
+                    </a>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+    
+    <div class="col-md-8">
+        {% if user.is_manager() %}
+            <div class="card mb-4">
+                <div class="card-header bg-info text-white">
+                    <h5 class="card-title mb-0">Projects Managed</h5>
+                </div>
+                <div class="card-body">
+                    {% set projects = user.projects.all() %}
+                    {% if projects %}
+                        <div class="list-group">
+                            {% for project in projects %}
+                                <a href="{{ url_for('main.project', project_id=project.id) }}" class="list-group-item list-group-item-action">
+                                    <div class="d-flex w-100 justify-content-between">
+                                        <h5 class="mb-1">{{ project.name }}</h5>
+                                        <small>{{ project.created_at.strftime('%Y-%m-%d') }}</small>
+                                    </div>
+                                    <p class="mb-1">{{ project.description|truncate(100) }}</p>
+                                    <small>Tasks: {{ project.tasks.count() }}</small>
+                                </a>
+                            {% endfor %}
+                        </div>
+                    {% else %}
+                        <p class="text-muted">No projects managed</p>
+                    {% endif %}
+                </div>
+            </div>
+        {% endif %}
+        
+        <div class="card">
+            <div class="card-header bg-success text-white">
+                <h5 class="card-title mb-0">Assigned Tasks</h5>
+            </div>
+            <div class="card-body">
+                {% if user.assigned_tasks %}
+                    <div class="list-group">
+                        {% for assignment in user.assigned_tasks %}
+                            <a href="{{ url_for('main.project', project_id=assignment.task.project.id) }}" class="list-group-item list-group-item-action">
+                                <div class="d-flex w-100 justify-content-between">
+                                    <h5 class="mb-1">{{ assignment.task.title }}</h5>
+                                    <small>
+                                        {% if assignment.task.completed %}
+                                            <span class="badge bg-success">Completed</span>
+                                        {% elif assignment.task.due_date and assignment.task.due_date < now %}
+                                            <span class="badge bg-danger">Overdue</span>
+                                        {% else %}
+                                            <span class="badge bg-{{ {'high': 'danger', 'medium': 'warning', 'low': 'info'}[assignment.task.priority] }}">
+                                                {{ assignment.task.priority|capitalize }}
+                                            </span>
+                                        {% endif %}
+                                    </small>
+                                </div>
+                                <p class="mb-1">{{ assignment.task.description|truncate(100) }}</p>
+                                <small>Project: {{ assignment.task.project.name }}</small>
+                            </a>
+                        {% endfor %}
+                    </div>
+                {% else %}
+                    <p class="text-muted">No assigned tasks</p>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

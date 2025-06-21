@@ -1,0 +1,194 @@
+{% extends "main/base.html" %}
+
+{% block content %}
+<div class="container-fluid bg-gradient-primary text-white py-5 mb-5">
+    <div class="container">
+        <div class="row align-items-center">
+            <div class="col-md-6 animate__animated animate__fadeInRight">
+                <h1 class="display-4 fw-bold mb-4">دليل نظام إدارة المشاريع</h1>
+                <p class="lead">نظام متكامل لإدارة المشاريع والمهام بكفاءة عالية، مع واجهة عربية سهلة الاستخدام</p>
+            </div>
+            <div class="col-md-6 text-center animate__animated animate__fadeInLeft">
+                <img src="https://cdn-icons-png.flaticon.com/512/7486/7486754.png" alt="شعار النظام" class="img-fluid" style="max-width: 300px;">
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="container mb-5">
+    <div class="row g-4">
+        <!-- دليل المستخدم -->
+        <div class="col-md-4">
+            <div class="card h-100 animate__animated animate__fadeInUp">
+                <div class="card-body text-center p-4">
+                    <div class="rounded-circle bg-primary bg-opacity-10 p-3 mx-auto mb-3" style="width: 80px; height: 80px;">
+                        <i class="fas fa-book fa-2x text-primary"></i>
+                    </div>
+                    <h3 class="card-title">دليل المستخدم</h3>
+                    <p class="card-text text-muted">دليل شامل لاستخدام النظام للمستخدمين العاديين</p>
+                    <a href="#userGuide" class="btn btn-primary" data-bs-toggle="collapse" role="button">
+                        <i class="fas fa-book-reader me-2"></i>عرض الدليل
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <!-- دليل المدير -->
+        <div class="col-md-4">
+            <div class="card h-100 animate__animated animate__fadeInUp" style="animation-delay: 0.2s;">
+                <div class="card-body text-center p-4">
+                    <div class="rounded-circle bg-success bg-opacity-10 p-3 mx-auto mb-3" style="width: 80px; height: 80px;">
+                        <i class="fas fa-user-tie fa-2x text-success"></i>
+                    </div>
+                    <h3 class="card-title">دليل المدير</h3>
+                    <p class="card-text text-muted">إرشادات خاصة لمدراء المشاريع والمشرفين</p>
+                    <a href="#managerGuide" class="btn btn-success" data-bs-toggle="collapse" role="button">
+                        <i class="fas fa-tasks me-2"></i>عرض الدليل
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <!-- دليل المسؤول -->
+        <div class="col-md-4">
+            <div class="card h-100 animate__animated animate__fadeInUp" style="animation-delay: 0.4s;">
+                <div class="card-body text-center p-4">
+                    <div class="rounded-circle bg-danger bg-opacity-10 p-3 mx-auto mb-3" style="width: 80px; height: 80px;">
+                        <i class="fas fa-user-shield fa-2x text-danger"></i>
+                    </div>
+                    <h3 class="card-title">دليل المسؤول</h3>
+                    <p class="card-text text-muted">دليل إدارة النظام للمسؤولين</p>
+                    <a href="#adminGuide" class="btn btn-danger" data-bs-toggle="collapse" role="button">
+                        <i class="fas fa-cog me-2"></i>عرض الدليل
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- محتوى الأدلة -->
+    <div class="mt-5">
+        <!-- دليل المستخدم -->
+        <div class="collapse" id="userGuide">
+            <div class="card card-body mb-4">
+                <h2 class="text-primary mb-4"><i class="fas fa-book me-2"></i>دليل المستخدم</h2>
+                <div class="row">
+                    <div class="col-md-4">
+                        <h4>البدء مع النظام</h4>
+                        <ul class="list-unstyled">
+                            <li><i class="fas fa-check text-success me-2"></i>إنشاء حساب جديد</li>
+                            <li><i class="fas fa-check text-success me-2"></i>تسجيل الدخول</li>
+                            <li><i class="fas fa-check text-success me-2"></i>تعديل الملف الشخصي</li>
+                        </ul>
+                    </div>
+                    <div class="col-md-4">
+                        <h4>العمل على المهام</h4>
+                        <ul class="list-unstyled">
+                            <li><i class="fas fa-check text-success me-2"></i>عرض المهام المخصصة</li>
+                            <li><i class="fas fa-check text-success me-2"></i>تحديث حالة المهام</li>
+                            <li><i class="fas fa-check text-success me-2"></i>تسجيل الوقت</li>
+                        </ul>
+                    </div>
+                    <div class="col-md-4">
+                        <h4>المشاركة في المشاريع</h4>
+                        <ul class="list-unstyled">
+                            <li><i class="fas fa-check text-success me-2"></i>عرض تفاصيل المشروع</li>
+                            <li><i class="fas fa-check text-success me-2"></i>التواصل مع الفريق</li>
+                            <li><i class="fas fa-check text-success me-2"></i>متابعة التقدم</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- دليل المدير -->
+        <div class="collapse" id="managerGuide">
+            <div class="card card-body mb-4">
+                <h2 class="text-success mb-4"><i class="fas fa-user-tie me-2"></i>دليل المدير</h2>
+                <div class="row">
+                    <div class="col-md-4">
+                        <h4>إدارة المشاريع</h4>
+                        <ul class="list-unstyled">
+                            <li><i class="fas fa-check text-success me-2"></i>إنشاء مشروع جديد</li>
+                            <li><i class="fas fa-check text-success me-2"></i>تعيين المهام</li>
+                            <li><i class="fas fa-check text-success me-2"></i>متابعة التقدم</li>
+                        </ul>
+                    </div>
+                    <div class="col-md-4">
+                        <h4>إدارة المخاطر</h4>
+                        <ul class="list-unstyled">
+                            <li><i class="fas fa-check text-success me-2"></i>تحديد المخاطر</li>
+                            <li><i class="fas fa-check text-success me-2"></i>وضع خطط التخفيف</li>
+                            <li><i class="fas fa-check text-success me-2"></i>متابعة الحالة</li>
+                        </ul>
+                    </div>
+                    <div class="col-md-4">
+                        <h4>التقارير</h4>
+                        <ul class="list-unstyled">
+                            <li><i class="fas fa-check text-success me-2"></i>تقارير المشاريع</li>
+                            <li><i class="fas fa-check text-success me-2"></i>تقارير الوقت</li>
+                            <li><i class="fas fa-check text-success me-2"></i>تحليل الأداء</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- دليل المسؤول -->
+        <div class="collapse" id="adminGuide">
+            <div class="card card-body">
+                <h2 class="text-danger mb-4"><i class="fas fa-user-shield me-2"></i>دليل المسؤول</h2>
+                <div class="row">
+                    <div class="col-md-4">
+                        <h4>إدارة المستخدمين</h4>
+                        <ul class="list-unstyled">
+                            <li><i class="fas fa-check text-success me-2"></i>إضافة مستخدمين</li>
+                            <li><i class="fas fa-check text-success me-2"></i>إدارة الصلاحيات</li>
+                            <li><i class="fas fa-check text-success me-2"></i>إدارة الأقسام</li>
+                        </ul>
+                    </div>
+                    <div class="col-md-4">
+                        <h4>إعدادات النظام</h4>
+                        <ul class="list-unstyled">
+                            <li><i class="fas fa-check text-success me-2"></i>الإعدادات العامة</li>
+                            <li><i class="fas fa-check text-success me-2"></i>إعدادات البريد</li>
+                            <li><i class="fas fa-check text-success me-2"></i>إعدادات الأمان</li>
+                        </ul>
+                    </div>
+                    <div class="col-md-4">
+                        <h4>النسخ الاحتياطي</h4>
+                        <ul class="list-unstyled">
+                            <li><i class="fas fa-check text-success me-2"></i>إنشاء نسخة احتياطية</li>
+                            <li><i class="fas fa-check text-success me-2"></i>استعادة النظام</li>
+                            <li><i class="fas fa-check text-success me-2"></i>إدارة السجلات</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- معلومات الدعم -->
+    <div class="text-center mt-5">
+        <h2 class="mb-4">للدعم والاستفسارات</h2>
+        <div class="row justify-content-center">
+            <div class="col-md-4">
+                <div class="card bg-light">
+                    <div class="card-body">
+                        <h5><i class="fas fa-envelope text-primary me-2"></i>البريد الإلكتروني</h5>
+                        <p><a href="mailto:eng.mohamed0shaban@gmail.com">eng.mohamed0shaban@gmail.com</a></p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="card bg-light">
+                    <div class="card-body">
+                        <h5><i class="fas fa-phone text-success me-2"></i>الهاتف</h5>
+                        <p><a href="tel:+201121891913">+201121891913</a></p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

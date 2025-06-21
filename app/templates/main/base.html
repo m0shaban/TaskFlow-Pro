@@ -1,0 +1,256 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% if title %}{{ title }} - TaskFlow Pro{% else %}TaskFlow Pro - نظام إدارة المشاريع{% endif %}</title>
+    <!-- Bootstrap RTL CSS -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.rtl.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/animate.css@4.1.1/animate.min.css">
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f8f9fa;
+        }
+        .navbar {
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        .navbar-brand {
+            font-weight: 700;
+        }
+        .dropdown-item.active, .dropdown-item:active {
+            background-color: #0d6efd;
+        }
+        .btn-primary {
+            background-color: #0d6efd;
+        }
+        .btn-primary:hover {
+            background-color: #0b5ed7;
+        }
+        .card {
+            border-radius: 10px;
+            border: none;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+            transition: transform 0.3s, box-shadow 0.3s;
+        }
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 15px rgba(0,0,0,0.1);
+        }
+        .bg-gradient-primary {
+            background: linear-gradient(to right, #0d6efd, #0099f7);
+        }
+        .main-content {
+            min-height: calc(100vh - 180px);
+        }
+    </style>
+</head>
+<body>
+    <nav class="navbar navbar-expand-lg navbar-dark bg-gradient-primary">
+        <div class="container">            <a class="navbar-brand animate__animated animate__fadeIn" href="{{ url_for('main.index') }}">
+                <i class="fas fa-tasks me-2"></i>TaskFlow Pro
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav me-auto">
+                    <li class="nav-item">
+                        <a class="nav-link {% if request.endpoint == 'main.index' %}active{% endif %}" href="{{ url_for('main.index') }}">
+                            <i class="fas fa-home me-1"></i>الرئيسية
+                        </a>
+                    </li>
+                    
+                    {% if current_user.is_authenticated %}
+                        <li class="nav-item">
+                            <a class="nav-link {% if request.endpoint == 'main.projects' %}active{% endif %}" href="{{ url_for('main.projects') }}">
+                                <i class="fas fa-project-diagram me-1"></i>المشاريع
+                            </a>
+                        </li>
+                        
+                        <li class="nav-item dropdown">
+                            <a class="nav-link dropdown-toggle {% if 'task' in request.endpoint %}active{% endif %}" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                <i class="fas fa-clipboard-list me-1"></i>المهام
+                            </a>
+                            <ul class="dropdown-menu">
+                                {% if current_user.is_manager() %}
+                                    <li>
+                                        <a class="dropdown-item" href="{{ url_for('main.projects') }}">
+                                            <i class="fas fa-tasks me-2"></i>إدارة المهام
+                                        </a>
+                                    </li>
+                                {% endif %}
+                                <li>
+                                    <a class="dropdown-item" href="{{ url_for('main.my_tasks') }}">
+                                        <i class="fas fa-user-check me-2"></i>مهامي المخصصة
+                                    </a>
+                                </li>
+                            </ul>
+                        </li>
+                        
+                        {% if current_user.is_manager() %}
+                            <li class="nav-item dropdown">
+                                <a class="nav-link dropdown-toggle {% if 'reports' in request.endpoint %}active{% endif %}" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                    <i class="fas fa-chart-line me-1"></i>التقارير
+                                </a>
+                                <ul class="dropdown-menu">
+                                    <li>
+                                        <a class="dropdown-item {% if request.endpoint == 'main.project_reports' %}active{% endif %}" href="{{ url_for('main.project_reports') }}">
+                                            <i class="fas fa-chart-bar me-2"></i>تقارير المشاريع
+                                        </a>
+                                    </li>
+                                    <li>
+                                        <a class="dropdown-item {% if request.endpoint == 'main.time_reports' %}active{% endif %}" href="{{ url_for('main.time_reports') }}">
+                                            <i class="fas fa-clock me-2"></i>تقارير الوقت
+                                        </a>
+                                    </li>
+                                </ul>
+                            </li>
+                            
+                            <li class="nav-item">
+                                <a class="nav-link {% if request.endpoint == 'main.risks' %}active{% endif %}" href="{{ url_for('main.risks') }}">
+                                    <i class="fas fa-exclamation-triangle me-1"></i>المخاطر
+                                </a>
+                            </li>
+                        {% endif %}
+                        
+                        {% if current_user.is_admin() %}
+                            <li class="nav-item dropdown">
+                                <a class="nav-link dropdown-toggle {% if request.endpoint in ['auth.users', 'main.departments'] %}active{% endif %}" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                    <i class="fas fa-cogs me-1"></i>الإدارة
+                                </a>
+                                <ul class="dropdown-menu">
+                                    <li>
+                                        <a class="dropdown-item {% if request.endpoint == 'auth.users' %}active{% endif %}" href="{{ url_for('auth.users') }}">
+                                            <i class="fas fa-users me-2"></i>المستخدمين
+                                        </a>
+                                    </li>
+                                    <li>
+                                        <a class="dropdown-item {% if request.endpoint == 'main.departments' %}active{% endif %}" href="{{ url_for('main.departments') }}">
+                                            <i class="fas fa-building me-2"></i>الأقسام
+                                        </a>
+                                    </li>
+                                    <li>
+                                        <a class="dropdown-item {% if request.endpoint == 'main.settings' %}active{% endif %}" href="{{ url_for('main.settings') }}">
+                                            <i class="fas fa-cog me-2"></i>الإعدادات
+                                        </a>
+                                    </li>
+                                </ul>
+                            </li>
+                        {% endif %}
+                    {% endif %}
+                    <li class="nav-item">
+                        <a class="nav-link {% if request.endpoint == 'main.documentation' %}active{% endif %}" href="{{ url_for('main.documentation') }}">
+                            <i class="fas fa-book me-1"></i>دليل الاستخدام
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ url_for('main.calendar') }}">
+                            <i class="fas fa-calendar me-1"></i>التقويم
+                        </a>
+                    </li>
+                </ul>
+                <ul class="navbar-nav">
+                    {% if current_user.is_authenticated %}
+                        <li class="nav-item dropdown">
+                            <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                <i class="fas fa-user-circle me-1"></i>{{ current_user.username }}
+                                {% if current_user.is_admin() %}
+                                    <span class="badge bg-danger ms-1">مدير</span>
+                                {% elif current_user.is_manager() %}
+                                    <span class="badge bg-warning text-dark ms-1">مشرف</span>
+                                {% endif %}
+                            </a>
+                            <ul class="dropdown-menu dropdown-menu-end">
+                                <li>
+                                    <a class="dropdown-item" href="{{ url_for('main.user', username=current_user.username) }}">
+                                        <i class="fas fa-id-card me-1"></i>الملف الشخصي
+                                    </a>
+                                </li>
+                                <li>
+                                    <a class="dropdown-item" href="{{ url_for('auth.edit_user', user_id=current_user.id) }}">
+                                        <i class="fas fa-user-edit me-1"></i>تعديل البيانات
+                                    </a>
+                                </li>
+                                <li><hr class="dropdown-divider"></li>
+                                <li>
+                                    <a class="dropdown-item" href="{{ url_for('auth.logout') }}">
+                                        <i class="fas fa-sign-out-alt me-1"></i>تسجيل الخروج
+                                    </a>
+                                </li>
+                            </ul>
+                        </li>
+                    {% else %}
+                        <li class="nav-item">
+                            <a class="nav-link {% if request.endpoint == 'auth.login' %}active{% endif %}" href="{{ url_for('auth.login') }}">
+                                <i class="fas fa-sign-in-alt me-1"></i>تسجيل الدخول
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link {% if request.endpoint == 'auth.register' %}active{% endif %}" href="{{ url_for('auth.register') }}">
+                                <i class="fas fa-user-plus me-1"></i>التسجيل
+                            </a>
+                        </li>
+                    {% endif %}
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <main class="container mt-4 main-content animate__animated animate__fadeIn">
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                {% for category, message in messages %} 
+                    <div class="alert alert-{{ category if category else 'info' }} alert-dismissible fade show animate__animated animate__fadeInDown" role="alert">
+                        <i class="{% if category == 'success' %}fas fa-check-circle{% elif category == 'danger' %}fas fa-exclamation-circle{% elif category == 'warning' %}fas fa-exclamation-triangle{% else %}fas fa-info-circle{% endif %} me-2"></i>
+                        {{ message }}
+                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                    </div>
+                {% endfor %}
+            {% endif %}
+        {% endwith %}
+
+        {% block content %}{% endblock %}
+    </main>
+
+    <footer class="bg-dark text-white mt-5 py-4">
+        <div class="container">
+            <div class="row">                <div class="col-md-6 text-center text-md-start">
+                    <h5><i class="fas fa-tasks me-2"></i>TaskFlow Pro</h5>
+                    <p class="small mb-0">نظام متكامل لإدارة المشاريع والمهام بكفاءة عالية</p>
+                </div>
+                <div class="col-md-6 text-center text-md-end">
+                    <p class="mb-0">© 2025 جميع الحقوق محفوظة للمهندس محمد شعبان</p>
+                    <p class="small">تم تطوير هذا النظام بكل جهد وحب</p>
+                    <p class="small">فلا تحرموني من دعوة صادقة بالتيسير والقبول</p>
+                    <p class="small">
+                        <a href="mailto:eng.mohamed0shaban@gmail.com" class="text-white"><i class="fas fa-envelope me-1"></i>eng.mohamed0shaban@gmail.com</a> | 
+                        <a href="tel:+201121891913" class="text-white"><i class="fas fa-phone me-1"></i>+201121891913</a>
+                    </p>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        // Add smooth scrolling
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                document.querySelector(this.getAttribute('href')).scrollIntoView({
+                    behavior: 'smooth'
+                });
+            });
+        });
+        
+        // Initialize tooltips
+        var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'))
+        var tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
+            return new bootstrap.Tooltip(tooltipTriggerEl)
+        });
+    </script>
+</body>
+</html>

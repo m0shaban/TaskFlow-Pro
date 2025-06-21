@@ -1,0 +1,253 @@
+{% extends "main/base.html" %}
+
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <div>
+        <h1 class="mb-0 animate__animated animate__fadeInRight">المشاريع</h1>
+        <nav aria-label="breadcrumb" class="animate__animated animate__fadeIn" style="animation-delay: 0.1s;">
+            <ol class="breadcrumb mb-0">
+                <li class="breadcrumb-item"><a href="{{ url_for('main.index') }}">الرئيسية</a></li>
+                <li class="breadcrumb-item active" aria-current="page">المشاريع</li>
+            </ol>
+        </nav>
+    </div>
+    {% if current_user.is_manager() %}
+        <a href="{{ url_for('main.new_project') }}" class="btn btn-primary animate__animated animate__fadeInLeft">
+            <i class="fas fa-plus me-1"></i> مشروع جديد
+        </a>
+    {% endif %}
+</div>
+
+<div class="card mb-4 animate__animated animate__fadeIn" style="animation-delay: 0.2s;">
+    <div class="card-header bg-white p-3">
+        <h5 class="mb-0"><i class="fas fa-filter me-2 text-primary"></i>تصفية المشاريع</h5>
+    </div>
+    <div class="card-body">
+        <div class="row g-3">
+            <div class="col-md-4">
+                <input type="text" id="searchInput" class="form-control" placeholder="ابحث عن مشروع..." aria-label="بحث">
+            </div>
+            <div class="col-md-3">
+                <select id="statusFilter" class="form-select">
+                    <option value="all">جميع الحالات</option>
+                    <option value="active">نشط</option>
+                    <option value="completed">مكتمل</option>
+                    <option value="overdue">متأخر</option>
+                </select>
+            </div>
+            <div class="col-md-3">
+                <select id="sortBy" class="form-select">
+                    <option value="newest">الأحدث أولاً</option>
+                    <option value="progress">التقدم (الأعلى)</option>
+                    <option value="alpha">أبجدي</option>
+                </select>
+            </div>
+            <div class="col-md-2">
+                <button id="toggleView" class="btn btn-outline-primary w-100">
+                    <i class="fas fa-th me-1"></i> تبديل العرض
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% if projects %}
+    <div id="projectCards" class="row project-list">
+        {% for project in projects %}
+            <div class="col-lg-4 col-md-6 mb-4 project-item animate__animated animate__fadeIn" data-name="{{ project.name }}" data-status="{% if project.task_completion_rate() == 100 %}completed{% elif project.end_date and project.end_date < now %}overdue{% else %}active{% endif %}" data-progress="{{ project.task_completion_rate() }}" style="animation-delay: {{ loop.index0 * 0.1 }}s;">
+                <div class="card h-100">
+                    <div class="card-header p-3 bg-white">
+                        <div class="d-flex justify-content-between align-items-center">
+                            <h5 class="card-title mb-0 text-truncate">{{ project.name }}</h5>
+                            <span class="badge bg-{{ 'success' if project.task_completion_rate() == 100 else 'warning' if project.task_completion_rate() > 0 else 'secondary' }}">
+                                {{ project.task_completion_rate() }}%
+                            </span>
+                        </div>
+                    </div>
+                    <div class="card-body p-3">
+                        <p class="card-text text-muted">{{ project.description|truncate(100) }}</p>
+                        
+                        <div class="mb-3">
+                            <div class="d-flex justify-content-between mb-1">
+                                <small class="text-muted">التقدم</small>
+                                <small class="text-muted">{{ project.task_completion_rate() }}%</small>
+                            </div>
+                            <div class="progress" style="height: 5px;">
+                                <div class="progress-bar bg-{{ 'success' if project.task_completion_rate() > 75 else 'warning' if project.task_completion_rate() > 25 else 'danger' }}" role="progressbar" style="width: {{ project.task_completion_rate() }}%;" 
+                                     aria-valuenow="{{ project.task_completion_rate() }}" aria-valuemin="0" aria-valuemax="100"></div>
+                            </div>
+                        </div>
+                        
+                        <div class="d-flex justify-content-between small text-muted mb-3">
+                            <div><i class="fas fa-tasks me-1"></i> {{ project.tasks.count() }} مهمة</div>
+                            <div><i class="fas fa-calendar-alt me-1"></i> {{ project.created_at.strftime('%Y-%m-%d') }}</div>
+                        </div>
+                        
+                        {% if project.budget %}
+                            <div class="d-flex align-items-center mb-3">
+                                <i class="fas fa-money-bill-wave text-success me-2"></i>
+                                <span class="badge bg-success bg-opacity-10 text-success">الميزانية: ${{ project.budget }}</span>
+                            </div>
+                        {% endif %}
+                    </div>
+                    <div class="card-footer p-3 bg-white border-top-0">
+                        <div class="d-grid gap-2">
+                            <a href="{{ url_for('main.project', project_id=project.id) }}" class="btn btn-primary">
+                                <i class="fas fa-eye me-1"></i> عرض التفاصيل
+                            </a>
+                            {% if project.owner == current_user %}
+                                <a href="{{ url_for('main.edit_project', project_id=project.id) }}" class="btn btn-outline-secondary">
+                                    <i class="fas fa-edit me-1"></i> تعديل
+                                </a>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        {% endfor %}
+    </div>
+    
+    <div id="projectTable" class="card animate__animated animate__fadeIn" style="display: none;">
+        <div class="card-body p-0">
+            <div class="table-responsive">
+                <table class="table table-hover mb-0">
+                    <thead>
+                        <tr>
+                            <th>اسم المشروع</th>
+                            <th>تاريخ البدء</th>
+                            <th>تاريخ الانتهاء</th>
+                            <th>التقدم</th>
+                            <th>المهام</th>
+                            <th>الإجراءات</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for project in projects %}
+                            <tr class="project-item" data-name="{{ project.name }}" data-status="{% if project.task_completion_rate() == 100 %}completed{% elif project.end_date and project.end_date < now %}overdue{% else %}active{% endif %}" data-progress="{{ project.task_completion_rate() }}">
+                                <td>
+                                    <div class="d-flex align-items-center">
+                                        <div class="project-icon bg-primary bg-opacity-10 text-primary rounded-circle p-2 me-2">
+                                            <i class="fas fa-project-diagram"></i>
+                                        </div>
+                                        <div>
+                                            <h6 class="mb-0">{{ project.name }}</h6>
+                                            <small class="text-muted">{{ project.description|truncate(50) }}</small>
+                                        </div>
+                                    </div>
+                                </td>
+                                <td>{{ project.start_date.strftime('%Y-%m-%d') if project.start_date else 'غير محدد' }}</td>
+                                <td>{{ project.end_date.strftime('%Y-%m-%d') if project.end_date else 'غير محدد' }}</td>
+                                <td>
+                                    <div class="d-flex align-items-center">
+                                        <div class="progress flex-grow-1 me-2" style="height: 5px;">
+                                            <div class="progress-bar bg-{{ 'success' if project.task_completion_rate() > 75 else 'warning' if project.task_completion_rate() > 25 else 'danger' }}" 
+                                                 role="progressbar" style="width: {{ project.task_completion_rate() }}%;" 
+                                                 aria-valuenow="{{ project.task_completion_rate() }}" aria-valuemin="0" aria-valuemax="100"></div>
+                                        </div>
+                                        <span>{{ project.task_completion_rate() }}%</span>
+                                    </div>
+                                </td>
+                                <td>{{ project.tasks.count() }}</td>
+                                <td>
+                                    <div class="btn-group">
+                                        <a href="{{ url_for('main.project', project_id=project.id) }}" class="btn btn-sm btn-primary">
+                                            <i class="fas fa-eye"></i>
+                                        </a>
+                                        {% if project.owner == current_user %}
+                                            <a href="{{ url_for('main.edit_project', project_id=project.id) }}" class="btn btn-sm btn-warning">
+                                                <i class="fas fa-edit"></i>
+                                            </a>
+                                        {% endif %}
+                                    </div>
+                                </td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+{% else %}
+    <div class="text-center my-5 py-5 animate__animated animate__fadeIn">
+        <img src="https://cdn-icons-png.flaticon.com/512/7486/7486754.png" alt="No projects" width="120" class="mb-4 opacity-50">
+        <h3>لا توجد مشاريع بعد</h3>
+        <p class="text-muted mb-4">ابدأ بإنشاء مشروعك الأول وإدارة المهام بكفاءة</p>
+        {% if current_user.is_manager() %}
+            <a href="{{ url_for('main.new_project') }}" class="btn btn-primary btn-lg animate__animated animate__pulse animate__infinite animate__slow">
+                <i class="fas fa-plus me-1"></i> إنشاء مشروع جديد
+            </a>
+        {% endif %}
+    </div>
+{% endif %}
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const searchInput = document.getElementById('searchInput');
+        const statusFilter = document.getElementById('statusFilter');
+        const sortBy = document.getElementById('sortBy');
+        const toggleView = document.getElementById('toggleView');
+        const projectCards = document.getElementById('projectCards');
+        const projectTable = document.getElementById('projectTable');
+        const projectItems = document.querySelectorAll('.project-item');
+        
+        // Toggle view
+        toggleView.addEventListener('click', function() {
+            if (projectCards.style.display === 'none') {
+                projectCards.style.display = 'flex';
+                projectTable.style.display = 'none';
+                toggleView.innerHTML = '<i class="fas fa-list me-1"></i> عرض قائمة';
+            } else {
+                projectCards.style.display = 'none';
+                projectTable.style.display = 'block';
+                toggleView.innerHTML = '<i class="fas fa-th me-1"></i> عرض بطاقات';
+            }
+        });
+        
+        // Filter and sort function
+        function filterProjects() {
+            const searchTerm = searchInput.value.toLowerCase();
+            const status = statusFilter.value;
+            const sort = sortBy.value;
+            
+            // Convert NodeList to Array for sorting
+            const projectsArray = Array.from(projectItems);
+            
+            // Sort projects
+            if (sort === 'newest') {
+                // Already sorted by newest in the template
+            } else if (sort === 'progress') {
+                projectsArray.sort((a, b) => {
+                    return parseInt(b.dataset.progress) - parseInt(a.dataset.progress);
+                });
+            } else if (sort === 'alpha') {
+                projectsArray.sort((a, b) => {
+                    return a.dataset.name.localeCompare(b.dataset.name);
+                });
+            }
+            
+            // Update order in DOM
+            projectsArray.forEach(project => {
+                // First, hide all based on search and status
+                const nameMatches = project.dataset.name.toLowerCase().includes(searchTerm);
+                const statusMatches = status === 'all' || project.dataset.status === status;
+                
+                if (nameMatches && statusMatches) {
+                    project.style.display = '';
+                } else {
+                    project.style.display = 'none';
+                }
+                
+                // Then move to maintain sort order (for card view)
+                if (project.parentElement.id === 'projectCards') {
+                    projectCards.appendChild(project);
+                }
+            });
+        }
+        
+        // Add event listeners
+        searchInput.addEventListener('input', filterProjects);
+        statusFilter.addEventListener('change', filterProjects);
+        sortBy.addEventListener('change', filterProjects);
+    });
+</script>
+{% endblock %}

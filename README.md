@@ -57,8 +57,8 @@ TaskFlow Pro هو نظام ويب شامل مبني على Flask لإدارة ا
 
 ### 1. تحميل المشروع
 ```bash
-git clone <repository_url>
-cd BMS
+git clone https://github.com/m0shaban/TaskFlow-Pro.git
+cd TaskFlow-Pro
 ```
 
 ### 2. إعداد البيئة الافتراضية

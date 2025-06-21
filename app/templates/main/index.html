@@ -1,0 +1,266 @@
+{% extends "main/base.html" %}
+
+{% block content %}
+<div class="row">
+    <div class="col-12 mb-4">
+        <div class="card bg-gradient-primary text-white animate__animated animate__fadeIn">
+            <div class="card-body p-4">
+                <div class="row align-items-center">
+                    <div class="col-md-8">                        <h1 class="display-5 fw-bold">مرحبًا بك في TaskFlow Pro، {{ current_user.username }}!</h1>
+                        <p class="lead mb-3">نظام إدارة المشاريع المتطور. ابدأ يومك بالإطلاع على المهام والمشاريع.</p>
+                        {% if current_user.is_manager() %}
+                            <a href="{{ url_for('main.new_project') }}" class="btn btn-light px-4 me-2 animate__animated animate__pulse animate__infinite animate__slower">
+                                <i class="fas fa-plus-circle me-2"></i>إنشاء مشروع جديد
+                            </a>
+                        {% endif %}
+                        <a href="{{ url_for('main.my_tasks') }}" class="btn btn-outline-light px-4">
+                            <i class="fas fa-tasks me-2"></i>مهامي
+                        </a>
+                    </div>
+                    <div class="col-md-4 d-none d-md-block text-center">
+                        <i class="fas fa-chart-line fa-5x text-white-50"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-md-3 col-sm-6 mb-4">
+        <div class="dashboard-widget animate__animated animate__fadeInUp">
+            <div class="d-flex align-items-center">
+                <div class="rounded-circle bg-primary bg-opacity-10 p-3 me-3">
+                    <i class="fas fa-project-diagram text-primary fa-2x"></i>
+                </div>
+                <div>
+                    <h3 class="mb-0 fw-bold">{{ project_count }}</h3>
+                    <p class="text-muted mb-0">المشاريع</p>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3 col-sm-6 mb-4">
+        <div class="dashboard-widget animate__animated animate__fadeInUp" style="animation-delay: 0.1s;">
+            <div class="d-flex align-items-center">
+                <div class="rounded-circle bg-success bg-opacity-10 p-3 me-3">
+                    <i class="fas fa-clipboard-check text-success fa-2x"></i>
+                </div>
+                <div>
+                    <h3 class="mb-0 fw-bold">{{ active_task_count }}</h3>
+                    <p class="text-muted mb-0">المهام النشطة</p>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3 col-sm-6 mb-4">
+        <div class="dashboard-widget animate__animated animate__fadeInUp" style="animation-delay: 0.2s;">
+            <div class="d-flex align-items-center">
+                <div class="rounded-circle bg-info bg-opacity-10 p-3 me-3">
+                    <i class="fas fa-chart-pie text-info fa-2x"></i>
+                </div>
+                <div>
+                    <h3 class="mb-0 fw-bold">{{ completion_rate }}%</h3>
+                    <p class="text-muted mb-0">معدل الإنجاز</p>
+                </div>
+            </div>
+            <div class="progress mt-3" style="height: 8px;">
+                <div class="progress-bar bg-info" role="progressbar" style="width: {{ completion_rate }}%;" 
+                     aria-valuenow="{{ completion_rate }}" aria-valuemin="0" aria-valuemax="100"></div>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3 col-sm-6 mb-4">
+        <div class="dashboard-widget animate__animated animate__fadeInUp" style="animation-delay: 0.3s;">
+            <div class="d-flex align-items-center">
+                <div class="rounded-circle bg-warning bg-opacity-10 p-3 me-3">
+                    <i class="fas fa-clock text-warning fa-2x"></i>
+                </div>
+                <div>
+                    <h3 class="mb-0 fw-bold" id="currentTime">--:--</h3>
+                    <p class="text-muted mb-0" id="currentDate">--/--/----</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-md-8">
+        <div class="card mb-4 animate__animated animate__fadeInUp" style="animation-delay: 0.4s;">
+            <div class="card-header bg-white">
+                <div class="d-flex justify-content-between align-items-center">
+                    <h5 class="card-title mb-0"><i class="fas fa-tasks me-2 text-primary"></i>المشاريع الأخيرة</h5>
+                    <a href="{{ url_for('main.projects') }}" class="btn btn-sm btn-primary">عرض الكل</a>
+                </div>
+            </div>
+            <div class="card-body p-0">
+                {% if projects %}
+                    <div class="list-group list-group-flush">
+                        {% for project in projects[:5] %}
+                            <div class="list-group-item">
+                                <div class="d-flex justify-content-between align-items-center">
+                                    <div>
+                                        <h6 class="mb-1">{{ project.name }}</h6>
+                                        <p class="text-muted small mb-0">{{ project.description|truncate(100) }}</p>
+                                    </div>
+                                    <div class="text-end">
+                                        <span class="badge bg-{{ 'success' if project.task_completion_rate() > 75 else 'warning' if project.task_completion_rate() > 25 else 'danger' }}">
+                                            {{ project.task_completion_rate() }}%
+                                        </span>
+                                        <div class="mt-2">
+                                            <a href="{{ url_for('main.project', project_id=project.id) }}" class="btn btn-sm btn-outline-primary">
+                                                <i class="fas fa-eye me-1"></i>عرض
+                                            </a>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        {% endfor %}
+                    </div>
+                {% else %}
+                    <div class="text-center p-4">
+                        <img src="https://cdn-icons-png.flaticon.com/512/7486/7486754.png" alt="No projects" width="80" class="mb-3 opacity-50">
+                        <h5>لا توجد مشاريع بعد</h5>
+                        <p class="text-muted">قم بإنشاء مشروع جديد للبدء</p>
+                        <a href="{{ url_for('main.new_project') }}" class="btn btn-primary">
+                            <i class="fas fa-plus me-1"></i>إنشاء مشروع
+                        </a>
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-4">
+        <div class="card mb-4 animate__animated animate__fadeInUp" style="animation-delay: 0.5s;">
+            <div class="card-header bg-white">
+                <h5 class="card-title mb-0"><i class="fas fa-bell me-2 text-primary"></i>النشاطات الأخيرة</h5>
+            </div>
+            <div class="card-body p-0">
+                {% if recent_activity %}
+                    <div class="list-group list-group-flush">
+                        {% for activity in recent_activity %}
+                            <div class="list-group-item">
+                                <div class="d-flex">
+                                    <div class="me-3">
+                                        <div class="avatar-sm bg-light rounded-circle p-2 text-center">
+                                            <i class="fas fa-{{ activity.icon }} text-primary"></i>
+                                        </div>
+                                    </div>
+                                    <div>
+                                        <p class="mb-1">{{ activity.description }}</p>
+                                        <small class="text-muted">{{ activity.timestamp.strftime('%Y-%m-%d %H:%M') }}</small>
+                                    </div>
+                                </div>
+                            </div>
+                        {% endfor %}
+                    </div>
+                {% else %}
+                    <div class="text-center p-4">
+                        <img src="https://cdn-icons-png.flaticon.com/512/1380/1380641.png" alt="No activity" width="80" class="mb-3 opacity-50">
+                        <h5>لا توجد نشاطات حديثة</h5>
+                        <p class="text-muted">ستظهر النشاطات هنا عند العمل على المشاريع</p>
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+
+        <div class="card animate__animated animate__fadeInUp" style="animation-delay: 0.6s;">
+            <div class="card-header bg-white">
+                <h5 class="card-title mb-0"><i class="fas fa-lightbulb me-2 text-primary"></i>نصائح سريعة</h5>
+            </div>
+            <div class="card-body">
+                <div id="tipCarousel" class="carousel slide" data-bs-ride="carousel">
+                    <div class="carousel-inner">
+                        <div class="carousel-item active">
+                            <div class="p-2 text-center">
+                                <i class="fas fa-tasks fa-2x text-primary mb-3"></i>
+                                <h5>قسِّم المهام الكبيرة</h5>
+                                <p class="text-muted">قم بتقسيم المهام الكبيرة إلى مهام أصغر لزيادة الإنتاجية وسهولة التتبع.</p>
+                            </div>
+                        </div>
+                        <div class="carousel-item">
+                            <div class="p-2 text-center">
+                                <i class="fas fa-chart-line fa-2x text-primary mb-3"></i>
+                                <h5>تابع تقدم المشروع</h5>
+                                <p class="text-muted">تحقق من تقارير المشاريع بانتظام لمراقبة التقدم وتحديد المشكلات مبكرًا.</p>
+                            </div>
+                        </div>
+                        <div class="carousel-item">
+                            <div class="p-2 text-center">
+                                <i class="fas fa-users fa-2x text-primary mb-3"></i>
+                                <h5>تعاون مع الفريق</h5>
+                                <p class="text-muted">حافظ على التواصل والتعاون المستمر مع أعضاء الفريق لضمان نجاح المشروع.</p>
+                            </div>
+                        </div>
+                        <div class="carousel-item">
+                            <div class="p-2 text-center">
+                                <i class="fas fa-check-circle fa-2x text-success mb-3"></i>
+                                <h5>الإتقان في العمل</h5>
+                                <p class="text-muted">قال رسول الله ﷺ: "إن الله يحب إذا عمل أحدكم عملاً أن يتقنه". اجعل الإتقان والإحسان منهجًا في إدارة مشاريعك.</p>
+                            </div>
+                        </div>
+                        <div class="carousel-item">
+                            <div class="p-2 text-center">
+                                <i class="fas fa-hand-holding-heart fa-2x text-primary mb-3"></i>
+                                <h5>التوكل مع الأخذ بالأسباب</h5>
+                                <p class="text-muted">قال تعالى: "وَمَنْ يَتَّقِ اللَّهَ يَجْعَلْ لَهُ مَخْرَجًا وَيَرْزُقْهُ مِنْ حَيْثُ لَا يَحْتَسِبُ". اتقِ الله في عملك وسترى البركة في مشروعك.</p>
+                            </div>
+                        </div>
+                        <div class="carousel-item">
+                            <div class="p-2 text-center">
+                                <i class="fas fa-balance-scale fa-2x text-warning mb-3"></i>
+                                <h5>العدل والإنصاف في الإدارة</h5>
+                                <p class="text-muted">قال النبي ﷺ: "المسلم أخو المسلم، لا يظلمه ولا يسلمه". كن عادلاً ومنصفًا مع فريق العمل والعملاء.</p>
+                            </div>
+                        </div>
+                        <div class="carousel-item">
+                            <div class="p-2 text-center">
+                                <i class="fas fa-clock fa-2x text-info mb-3"></i>
+                                <h5>تنظيم الوقت وأداء الأمانة</h5>
+                                <p class="text-muted">قال تعالى: "إِنَّ اللَّهَ يَأْمُرُكُمْ أَنْ تُؤَدُّوا الْأَمَانَاتِ إِلَىٰ أَهْلِهَا". احرص على أداء مسؤولياتك بصدق وأمانة.</p>
+                            </div>
+                        </div>
+                        <div class="carousel-item">
+                            <div class="p-2 text-center">
+                                <i class="fas fa-users fa-2x text-primary mb-3"></i>
+                                <h5>الاستشارة والتعاون</h5>
+                                <p class="text-muted">قال تعالى: "وَشَاوِرْهُمْ فِي الْأَمْرِ". اطلب المشورة من أهل الخبرة، فالرأي السديد مفتاح النجاح.</p>
+                            </div>
+                        </div>
+                    </div>
+                    <button class="carousel-control-prev" type="button" data-bs-target="#tipCarousel" data-bs-slide="prev">
+                        <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                        <span class="visually-hidden">السابق</span>
+                    </button>
+                    <button class="carousel-control-next" type="button" data-bs-target="#tipCarousel" data-bs-slide="next">
+                        <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                        <span class="visually-hidden">التالي</span>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    // Update current time and date
+    function updateClock() {
+        const now = new Date();
+        
+        // Format time
+        const hours = now.getHours().toString().padStart(2, '0');
+        const minutes = now.getMinutes().toString().padStart(2, '0');
+        document.getElementById('currentTime').textContent = hours + ':' + minutes;
+        
+        // Format date
+        const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
+        document.getElementById('currentDate').textContent = now.toLocaleDateString('ar-SA', options);
+    }
+    
+    // Initial call and set interval
+    updateClock();
+    setInterval(updateClock, 60000); // Update every minute
+</script>
+{% endblock %}

@@ -1,0 +1,71 @@
+{% extends "main/base.html" %}
+
+{% block content %}
+<div class="row">
+    <div class="col-md-8">
+        <div class="card mb-4">
+            <div class="card-header bg-primary text-white">
+                <h5 class="card-title mb-0">Assign Task: {{ task.title }}</h5>
+            </div>
+            <div class="card-body">
+                <p><strong>Project:</strong> {{ task.project.name }}</p>
+                <p><strong>Description:</strong> {{ task.description }}</p>
+                <p><strong>Priority:</strong> {{ task.priority|capitalize }}</p>
+                {% if task.due_date %}
+                    <p><strong>Due Date:</strong> {{ task.due_date.strftime('%Y-%m-%d') }}</p>
+                {% endif %}
+                
+                <hr>
+                
+                <h5>Current Assignments</h5>
+                {% if assigned_users %}
+                    <ul class="list-group mb-3">
+                        {% for user in assigned_users %}
+                            <li class="list-group-item d-flex justify-content-between align-items-center">
+                                {{ user.username }}
+                                <form method="POST" action="{{ url_for('main.unassign_task', task_id=task.id, user_id=user.id) }}" style="display: inline;">
+                                    <button type="submit" class="btn btn-sm btn-danger" onclick="return confirm('Are you sure you want to remove this assignment?')">
+                                        Remove
+                                    </button>
+                                </form>
+                            </li>
+                        {% endfor %}
+                    </ul>
+                {% else %}
+                    <p class="text-muted">No users assigned yet.</p>
+                {% endif %}
+                
+                <h5>Add Assignment</h5>
+                <form method="POST">
+                    <div class="mb-3">
+                        <label for="user_id" class="form-label">Select User</label>
+                        <select name="user_id" id="user_id" class="form-select" required>
+                            <option value="">-- Select User --</option>
+                            {% for user in users %}
+                                {% if user not in assigned_users %}
+                                    <option value="{{ user.id }}">{{ user.username }} ({{ user.email }})</option>
+                                {% endif %}
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <button type="submit" class="btn btn-success">Assign User</button>
+                    <a href="{{ url_for('main.project', project_id=task.project.id) }}" class="btn btn-secondary">Back to Project</a>
+                </form>
+            </div>
+        </div>
+    </div>
+    
+    <div class="col-md-4">
+        <div class="card mb-4">
+            <div class="card-header bg-info text-white">
+                <h5 class="card-title mb-0">Tips</h5>
+            </div>
+            <div class="card-body">
+                <p>Assign this task to multiple team members to collaborate on it.</p>
+                <p>Users can only see projects where they have assigned tasks.</p>
+                <p>When assigning tasks, consider team members' workload and expertise.</p>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

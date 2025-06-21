@@ -1,0 +1,173 @@
+{% extends "main/base.html" %}
+
+{% block content %}
+<div class="row">
+    <div class="col-md-3">
+        <div class="card mb-4">
+            <div class="card-header bg-primary text-white">
+                <h5 class="card-title mb-0">إعدادات النظام</h5>
+            </div>
+            <div class="card-body p-0">
+                <div class="list-group list-group-flush" role="tablist">
+                    <a class="list-group-item list-group-item-action active" data-bs-toggle="list" href="#general" role="tab">
+                        <i class="fas fa-cog me-2"></i>الإعدادات العامة
+                    </a>
+                    <a class="list-group-item list-group-item-action" data-bs-toggle="list" href="#email" role="tab">
+                        <i class="fas fa-envelope me-2"></i>إعدادات البريد الإلكتروني
+                    </a>
+                    <a class="list-group-item list-group-item-action" data-bs-toggle="list" href="#security" role="tab">
+                        <i class="fas fa-shield-alt me-2"></i>الأمان والصلاحيات
+                    </a>
+                    <a class="list-group-item list-group-item-action" data-bs-toggle="list" href="#backup" role="tab">
+                        <i class="fas fa-database me-2"></i>النسخ الاحتياطي
+                    </a>
+                    <a class="list-group-item list-group-item-action" data-bs-toggle="list" href="#logs" role="tab">
+                        <i class="fas fa-file-alt me-2"></i>سجلات النظام
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="col-md-9">
+        <div class="tab-content">
+            <!-- General Settings -->
+            <div class="tab-pane fade show active" id="general" role="tabpanel">
+                <div class="card">
+                    <div class="card-header bg-primary text-white">
+                        <h5 class="card-title mb-0">الإعدادات العامة</h5>
+                    </div>
+                    <div class="card-body">
+                        <form>
+                            <div class="mb-3">
+                                <label for="siteName" class="form-label">اسم النظام</label>
+                                <input type="text" class="form-control" id="siteName" value="نظام إدارة المشاريع">
+                            </div>
+                            <div class="mb-3">
+                                <label for="siteDescription" class="form-label">وصف النظام</label>
+                                <textarea class="form-control" id="siteDescription" rows="2">نظام متكامل لإدارة المشاريع والمهام وفرق العمل</textarea>
+                            </div>
+                            <div class="mb-3">
+                                <label for="timezone" class="form-label">المنطقة الزمنية</label>
+                                <select class="form-select" id="timezone">
+                                    <option>UTC</option>
+                                    <option selected>Asia/Riyadh</option>
+                                    <option>Europe/London</option>
+                                    <option>America/New_York</option>
+                                </select>
+                            </div>
+                            <div class="mb-3">
+                                <label for="dateFormat" class="form-label">تنسيق التاريخ</label>
+                                <select class="form-select" id="dateFormat">
+                                    <option selected>YYYY-MM-DD</option>
+                                    <option>DD/MM/YYYY</option>
+                                    <option>MM/DD/YYYY</option>
+                                </select>
+                            </div>
+                            <div class="mb-3 form-check">
+                                <input type="checkbox" class="form-check-input" id="enableRegistration" checked>
+                                <label class="form-check-label" for="enableRegistration">السماح بالتسجيل في النظام</label>
+                            </div>
+                            <button type="submit" class="btn btn-primary">حفظ الإعدادات</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Email Settings -->
+            <div class="tab-pane fade" id="email" role="tabpanel">
+                <div class="card">
+                    <div class="card-header bg-primary text-white">
+                        <h5 class="card-title mb-0">إعدادات البريد الإلكتروني</h5>
+                    </div>
+                    <div class="card-body">
+                        <form>
+                            <div class="mb-3">
+                                <label for="smtpServer" class="form-label">خادم SMTP</label>
+                                <input type="text" class="form-control" id="smtpServer" placeholder="smtp.example.com">
+                            </div>
+                            <div class="row mb-3">
+                                <div class="col-md-6">
+                                    <label for="smtpPort" class="form-label">منفذ SMTP</label>
+                                    <input type="number" class="form-control" id="smtpPort" value="587">
+                                </div>
+                                <div class="col-md-6">
+                                    <label for="encryption" class="form-label">التشفير</label>
+                                    <select class="form-select" id="encryption">
+                                        <option>None</option>
+                                        <option selected>TLS</option>
+                                        <option>SSL</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="mb-3">
+                                <label for="username" class="form-label">اسم المستخدم</label>
+                                <input type="text" class="form-control" id="username" placeholder="user@example.com">
+                            </div>
+                            <div class="mb-3">
+                                <label for="password" class="form-label">كلمة المرور</label>
+                                <input type="password" class="form-control" id="password">
+                            </div>
+                            <div class="mb-3">
+                                <label for="fromEmail" class="form-label">البريد الإلكتروني المرسل</label>
+                                <input type="email" class="form-control" id="fromEmail" placeholder="noreply@yourdomain.com">
+                            </div>
+                            <div class="mb-3">
+                                <label for="fromName" class="form-label">اسم المرسل</label>
+                                <input type="text" class="form-control" id="fromName" placeholder="نظام إدارة المشاريع">
+                            </div>
+                            <button type="button" class="btn btn-info mb-3">اختبار الاتصال</button>
+                            <div class="d-grid">
+                                <button type="submit" class="btn btn-primary">حفظ الإعدادات</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Security Settings -->
+            <div class="tab-pane fade" id="security" role="tabpanel">
+                <div class="card">
+                    <div class="card-header bg-primary text-white">
+                        <h5 class="card-title mb-0">إعدادات الأمان والصلاحيات</h5>
+                    </div>
+                    <div class="card-body">
+                        <form>
+                            <div class="mb-3 form-check">
+                                <input type="checkbox" class="form-check-input" id="forceSsl" checked>
+                                <label class="form-check-label" for="forceSsl">إجبار استخدام SSL</label>
+                            </div>
+                            <div class="mb-3 form-check">
+                                <input type="checkbox" class="form-check-input" id="enableTwoFactor">
+                                <label class="form-check-label" for="enableTwoFactor">تفعيل المصادقة الثنائية</label>
+                            </div>
+                            <div class="mb-3">
+                                <label for="passwordPolicy" class="form-label">سياسة كلمة المرور</label>
+                                <select class="form-select" id="passwordPolicy">
+                                    <option>ضعيف (٦ أحرف على الأقل)</option>
+                                    <option selected>متوسط (٨ أحرف مع أرقام)</option>
+                                    <option>قوي (٨ أحرف مع أرقام ورموز)</option>
+                                    <option>ممتاز (١٠ أحرف مع أرقام ورموز وأحرف كبيرة وصغيرة)</option>
+                                </select>
+                            </div>
+                            <div class="mb-3">
+                                <label for="sessionTimeout" class="form-label">مدة الجلسة (بالدقائق)</label>
+                                <input type="number" class="form-control" id="sessionTimeout" value="60">
+                            </div>
+                            <div class="mb-3">
+                                <label for="loginAttempts" class="form-label">عدد محاولات تسجيل الدخول قبل القفل</label>
+                                <input type="number" class="form-control" id="loginAttempts" value="5">
+                            </div>
+                            <div class="d-grid">
+                                <button type="submit" class="btn btn-primary">حفظ الإعدادات</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Other settings tabs with similar structure -->
+        </div>
+    </div>
+</div>
+{% endblock %}

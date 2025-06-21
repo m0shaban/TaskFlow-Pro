@@ -1,0 +1,169 @@
+{% extends "main/base.html" %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-lg-8 col-md-10">
+        <div class="animate__animated animate__fadeIn">
+            <nav aria-label="breadcrumb" class="mb-3">
+                <ol class="breadcrumb">
+                    <li class="breadcrumb-item"><a href="{{ url_for('main.index') }}">الرئيسية</a></li>
+                    <li class="breadcrumb-item"><a href="{{ url_for('main.projects') }}">المشاريع</a></li>
+                    <li class="breadcrumb-item active" aria-current="page">{{ 'تعديل المشروع' if project else 'مشروع جديد' }}</li>
+                </ol>
+            </nav>
+        </div>
+
+        <div class="card animate__animated animate__fadeInUp">
+            <div class="card-header bg-gradient-primary text-white p-4">
+                <div class="d-flex align-items-center">
+                    <div class="me-3">
+                        <div class="rounded-circle bg-white bg-opacity-25 p-3 text-center" style="width: 60px; height: 60px;">
+                            <i class="fas fa-{{ project|default('plus-circle', true) if project else 'plus-circle' }} fa-2x text-white"></i>
+                        </div>
+                    </div>
+                    <div>
+                        <h2 class="mb-0">{{ 'تعديل المشروع' if project else 'إنشاء مشروع جديد' }}</h2>
+                        <p class="mb-0 text-white-50">{{ 'قم بتحديث تفاصيل المشروع' if project else 'أدخل تفاصيل المشروع الجديد' }}</p>
+                    </div>
+                </div>
+            </div>
+            <div class="card-body p-4">
+                <form method="POST" class="needs-validation" novalidate>
+                    {{ form.hidden_tag() }}
+                    
+                    <div class="mb-4">
+                        {{ form.name.label(class="form-label fw-bold") }}
+                        {{ form.name(class="form-control form-control-lg", placeholder="أدخل اسم المشروع") }}
+                        {% if form.name.errors %}
+                            <div class="invalid-feedback d-block">
+                                {% for error in form.name.errors %}
+                                    <i class="fas fa-exclamation-circle me-1"></i>{{ error }}
+                                {% endfor %}
+                            </div>
+                        {% else %}
+                            <div class="form-text">أدخل اسمًا واضحًا ومميزًا للمشروع.</div>
+                        {% endif %}
+                    </div>
+                    
+                    <div class="mb-4">
+                        {{ form.description.label(class="form-label fw-bold") }}
+                        {{ form.description(class="form-control", rows=4, placeholder="اكتب وصفًا للمشروع يوضح هدفه ونطاق العمل...") }}
+                        {% if form.description.errors %}
+                            <div class="invalid-feedback d-block">
+                                {% for error in form.description.errors %}
+                                    <i class="fas fa-exclamation-circle me-1"></i>{{ error }}
+                                {% endfor %}
+                            </div>
+                        {% endif %}
+                    </div>
+                    
+                    <div class="card mb-4 bg-light border-0">
+                        <div class="card-body">
+                            <h5 class="card-title"><i class="fas fa-file-invoice-dollar me-2 text-primary"></i>المعلومات المالية</h5>
+                            <div class="row g-3">
+                                <div class="col-md-6">
+                                    {{ form.budget.label(class="form-label fw-bold") }}
+                                    <div class="input-group">
+                                        <span class="input-group-text"><i class="fas fa-dollar-sign"></i></span>
+                                        {{ form.budget(class="form-control", type="number", step="0.01", placeholder="أدخل الميزانية") }}
+                                    </div>
+                                    {% if form.budget.errors %}
+                                        <div class="invalid-feedback d-block">
+                                            {% for error in form.budget.errors %}
+                                                <i class="fas fa-exclamation-circle me-1"></i>{{ error }}
+                                            {% endfor %}
+                                        </div>
+                                    {% endif %}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="card mb-4 bg-light border-0">
+                        <div class="card-body">
+                            <h5 class="card-title"><i class="fas fa-calendar-alt me-2 text-primary"></i>الجدول الزمني</h5>
+                            <div class="row g-3">
+                                <div class="col-md-6">
+                                    {{ form.start_date.label(class="form-label fw-bold") }}
+                                    {{ form.start_date(class="form-control", type="date") }}
+                                    {% if form.start_date.errors %}
+                                        <div class="invalid-feedback d-block">
+                                            {% for error in form.start_date.errors %}
+                                                <i class="fas fa-exclamation-circle me-1"></i>{{ error }}
+                                            {% endfor %}
+                                        </div>
+                                    {% endif %}
+                                </div>
+                                <div class="col-md-6">
+                                    {{ form.end_date.label(class="form-label fw-bold") }}
+                                    {{ form.end_date(class="form-control", type="date") }}
+                                    {% if form.end_date.errors %}
+                                        <div class="invalid-feedback d-block">
+                                            {% for error in form.end_date.errors %}
+                                                <i class="fas fa-exclamation-circle me-1"></i>{{ error }}
+                                            {% endfor %}
+                                        </div>
+                                    {% endif %}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="d-grid gap-2">
+                        {{ form.submit(class="btn btn-primary btn-lg py-3") }}
+                        <a href="{{ url_for('main.projects') }}" class="btn btn-outline-secondary">إلغاء</a>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    // Form validation
+    (function() {
+        'use strict';
+        window.addEventListener('load', function() {
+            // Fetch all forms we want to apply custom validation styles to
+            var forms = document.getElementsByClassName('needs-validation');
+            // Loop over them and prevent submission
+            Array.prototype.filter.call(forms, function(form) {
+                form.addEventListener('submit', function(event) {
+                    if (form.checkValidity() === false) {
+                        event.preventDefault();
+                        event.stopPropagation();
+                    }
+                    form.classList.add('was-validated');
+                }, false);
+            });
+        }, false);
+    })();
+    
+    // Date validation
+    document.addEventListener('DOMContentLoaded', function() {
+        const startDateInput = document.getElementById('start_date');
+        const endDateInput = document.getElementById('end_date');
+        
+        if (startDateInput && endDateInput) {
+            endDateInput.addEventListener('change', function() {
+                if (startDateInput.value && endDateInput.value) {
+                    const startDate = new Date(startDateInput.value);
+                    const endDate = new Date(endDateInput.value);
+                    
+                    if (endDate < startDate) {
+                        endDateInput.setCustomValidity('تاريخ الانتهاء يجب أن يكون بعد تاريخ البدء');
+                    } else {
+                        endDateInput.setCustomValidity('');
+                    }
+                }
+            });
+            
+            startDateInput.addEventListener('change', function() {
+                if (endDateInput.value) {
+                    endDateInput.dispatchEvent(new Event('change'));
+                }
+            });
+        }
+    });
+</script>
+{% endblock %}

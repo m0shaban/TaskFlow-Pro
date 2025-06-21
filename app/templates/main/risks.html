@@ -1,0 +1,265 @@
+{% extends "main/base.html" %}
+
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <div>
+        <h1 class="mb-0 animate__animated animate__fadeInRight">إدارة المخاطر</h1>
+        <nav aria-label="breadcrumb" class="animate__animated animate__fadeIn" style="animation-delay: 0.1s;">
+            <ol class="breadcrumb mb-0">
+                <li class="breadcrumb-item"><a href="{{ url_for('main.index') }}">الرئيسية</a></li>
+                <li class="breadcrumb-item active" aria-current="page">المخاطر</li>
+            </ol>
+        </nav>
+    </div>
+    
+    {% if current_user.is_manager() and projects %}
+        <div class="animate__animated animate__fadeInLeft">
+            <div class="dropdown">
+                <button class="btn btn-primary dropdown-toggle" type="button" id="newRiskDropdown" data-bs-toggle="dropdown" aria-expanded="false">
+                    <i class="fas fa-plus me-1"></i> إضافة مخاطرة جديدة
+                </button>
+                <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="newRiskDropdown">
+                    {% for project in projects %}
+                        <li><a class="dropdown-item" href="{{ url_for('main.new_risk', project_id=project.id) }}">{{ project.name }}</a></li>
+                    {% endfor %}
+                </ul>
+            </div>
+        </div>
+    {% endif %}
+</div>
+
+<!-- Risk Filters -->
+<div class="card mb-4 animate__animated animate__fadeIn" style="animation-delay: 0.2s;">
+    <div class="card-header bg-white p-3">
+        <h5 class="mb-0"><i class="fas fa-filter me-2 text-primary"></i>تصفية المخاطر</h5>
+    </div>
+    <div class="card-body">
+        <form action="{{ url_for('main.risks') }}" method="GET" class="row g-3">
+            <div class="col-md-3">
+                <label for="project" class="form-label">المشروع</label>
+                <select name="project_id" id="project" class="form-select">
+                    <option value="">-- جميع المشاريع --</option>
+                    {% for project in projects %}
+                        <option value="{{ project.id }}">{{ project.name }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+            <div class="col-md-3">
+                <label for="status" class="form-label">الحالة</label>
+                <select name="status" id="status" class="form-select">
+                    <option value="">-- جميع الحالات --</option>
+                    <option value="OPEN">مفتوحة</option>
+                    <option value="IN_PROGRESS">قيد التنفيذ</option>
+                    <option value="RESOLVED">تم حلها</option>
+                    <option value="CLOSED">مغلقة</option>
+                </select>
+            </div>
+            <div class="col-md-3">
+                <label for="due_date" class="form-label">تاريخ الاستحقاق</label>
+                <input type="date" name="due_date" id="due_date" class="form-control">
+            </div>
+            <div class="col-md-3 d-flex align-items-end">
+                <button type="submit" class="btn btn-primary w-100">
+                    <i class="fas fa-filter"></i> تصفية
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<!-- Risks List -->
+<div class="card animate__animated animate__fadeIn" style="animation-delay: 0.3s;">
+    <div class="card-header bg-white p-3">
+        <h5 class="mb-0"><i class="fas fa-exclamation-triangle me-2 text-primary"></i>قائمة المخاطر</h5>
+    </div>
+    <div class="card-body">
+        {% if risks %}
+            <div class="table-responsive">
+                <table class="table table-striped table-hover">
+                    <thead>
+                        <tr>
+                            <th>العنوان</th>
+                            <th>المشروع</th>
+                            <th>الحالة</th>
+                            <th>تاريخ الإنشاء</th>
+                            <th>تاريخ الاستحقاق</th>
+                            <th>خطة التخفيف</th>
+                            <th>الإجراءات</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for risk in risks %}
+                            <tr>
+                                <td>{{ risk.title }}</td>
+                                <td>{{ risk.project.name }}</td>
+                                <td>
+                                    {% if risk.status.name == 'OPEN' %}
+                                        <span class="badge bg-danger">مفتوحة</span>
+                                    {% elif risk.status.name == 'IN_PROGRESS' %}
+                                        <span class="badge bg-warning text-dark">قيد التنفيذ</span>
+                                    {% elif risk.status.name == 'RESOLVED' %}
+                                        <span class="badge bg-success">تم حلها</span>
+                                    {% else %}
+                                        <span class="badge bg-secondary">مغلقة</span>
+                                    {% endif %}
+                                </td>
+                                <td>{{ risk.created_at.strftime('%Y-%m-%d') }}</td>
+                                <td>{{ risk.due_date.strftime('%Y-%m-%d') if risk.due_date else 'غير محدد' }}</td>
+                                <td>{{ risk.mitigation_plan|truncate(30) if risk.mitigation_plan else 'لا توجد خطة' }}</td>
+                                <td>
+                                    <div class="btn-group" role="group">
+                                        <button type="button" class="btn btn-sm btn-info" data-bs-toggle="modal" data-bs-target="#viewRiskModal-{{ risk.id }}">
+                                            <i class="fas fa-eye"></i>
+                                        </button>
+                                        {% if risk.project.owner == current_user or current_user.is_admin() %}
+                                            <a href="{{ url_for('main.edit_risk', risk_id=risk.id) }}" class="btn btn-sm btn-warning">
+                                                <i class="fas fa-edit"></i>
+                                            </a>
+                                            <button type="button" class="btn btn-sm btn-danger" data-bs-toggle="modal" data-bs-target="#deleteRiskModal-{{ risk.id }}">
+                                                <i class="fas fa-trash"></i>
+                                            </button>
+                                        {% endif %}
+                                    </div>
+                                    
+                                    <!-- View Risk Modal -->
+                                    <div class="modal fade" id="viewRiskModal-{{ risk.id }}" tabindex="-1" aria-labelledby="viewRiskModalLabel-{{ risk.id }}" aria-hidden="true">
+                                        <div class="modal-dialog modal-lg">
+                                            <div class="modal-content">
+                                                <div class="modal-header bg-primary text-white">
+                                                    <h5 class="modal-title" id="viewRiskModalLabel-{{ risk.id }}">
+                                                        <i class="fas fa-exclamation-triangle me-2"></i>تفاصيل المخاطرة
+                                                    </h5>
+                                                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                                                </div>
+                                                <div class="modal-body">
+                                                    <h4>{{ risk.title }}</h4>
+                                                    <div class="row mb-3">
+                                                        <div class="col-md-6">
+                                                            <strong>المشروع:</strong> 
+                                                            <a href="{{ url_for('main.project', project_id=risk.project.id) }}">{{ risk.project.name }}</a>
+                                                        </div>
+                                                        <div class="col-md-6">
+                                                            <strong>الحالة:</strong> 
+                                                            {% if risk.status.name == 'OPEN' %}
+                                                                <span class="badge bg-danger">مفتوحة</span>
+                                                            {% elif risk.status.name == 'IN_PROGRESS' %}
+                                                                <span class="badge bg-warning text-dark">قيد التنفيذ</span>
+                                                            {% elif risk.status.name == 'RESOLVED' %}
+                                                                <span class="badge bg-success">تم حلها</span>
+                                                            {% else %}
+                                                                <span class="badge bg-secondary">مغلقة</span>
+                                                            {% endif %}
+                                                        </div>
+                                                    </div>
+                                                    <div class="mb-3">
+                                                        <strong>الوصف:</strong>
+                                                        <p>{{ risk.description or 'لا يوجد وصف' }}</p>
+                                                    </div>
+                                                    <div class="mb-3">
+                                                        <strong>خطة التخفيف:</strong>
+                                                        <p>{{ risk.mitigation_plan or 'لا توجد خطة تخفيف' }}</p>
+                                                    </div>
+                                                    <div class="row">
+                                                        <div class="col-md-6">
+                                                            <strong>تاريخ الإنشاء:</strong> {{ risk.created_at.strftime('%Y-%m-%d') }}
+                                                        </div>
+                                                        <div class="col-md-6">
+                                                            <strong>تاريخ الاستحقاق:</strong> {{ risk.due_date.strftime('%Y-%m-%d') if risk.due_date else 'غير محدد' }}
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="modal-footer">
+                                                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">إغلاق</button>
+                                                    {% if risk.project.owner == current_user or current_user.is_admin() %}
+                                                        <a href="{{ url_for('main.edit_risk', risk_id=risk.id) }}" class="btn btn-warning">
+                                                            <i class="fas fa-edit me-1"></i>تعديل
+                                                        </a>
+                                                    {% endif %}
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    
+                                    <!-- Delete Risk Modal -->
+                                    {% if risk.project.owner == current_user or current_user.is_admin() %}
+                                        <div class="modal fade" id="deleteRiskModal-{{ risk.id }}" tabindex="-1" aria-labelledby="deleteRiskModalLabel-{{ risk.id }}" aria-hidden="true">
+                                            <div class="modal-dialog">
+                                                <div class="modal-content">
+                                                    <div class="modal-header bg-danger text-white">
+                                                        <h5 class="modal-title" id="deleteRiskModalLabel-{{ risk.id }}">
+                                                            <i class="fas fa-trash me-2"></i>حذف المخاطرة
+                                                        </h5>
+                                                        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                                                    </div>
+                                                    <div class="modal-body">
+                                                        <p>هل أنت متأكد من رغبتك في حذف المخاطرة: <strong>{{ risk.title }}</strong>؟</p>
+                                                        <p class="text-danger"><i class="fas fa-exclamation-circle me-1"></i>هذا الإجراء لا يمكن التراجع عنه.</p>
+                                                    </div>
+                                                    <div class="modal-footer">
+                                                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">إلغاء</button>
+                                                        <form action="{{ url_for('main.delete_risk', risk_id=risk.id) }}" method="POST">
+                                                            {% if form %}
+                                                                {{ form.hidden_tag() }}
+                                                            {% else %}
+                                                                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                                                            {% endif %}
+                                                            <button type="submit" class="btn btn-danger">
+                                                                <i class="fas fa-trash me-1"></i>حذف
+                                                            </button>
+                                                        </form>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    {% endif %}
+                                </td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        {% else %}
+            <div class="text-center p-5">
+                <img src="https://cdn-icons-png.flaticon.com/512/1380/1380641.png" alt="No risks" class="img-fluid mb-3" style="max-width: 150px; opacity: 0.5;">
+                <h4>لا توجد مخاطر مسجلة</h4>
+                <p class="text-muted">قم بإضافة مخاطر للمشاريع لتتمكن من متابعتها وإدارتها</p>
+                {% if current_user.is_manager() and projects %}
+                    <div class="dropdown d-inline-block">
+                        <button class="btn btn-primary dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                            <i class="fas fa-plus me-1"></i> إضافة مخاطرة جديدة
+                        </button>
+                        <ul class="dropdown-menu">
+                            {% for project in projects %}
+                                <li><a class="dropdown-item" href="{{ url_for('main.new_risk', project_id=project.id) }}">{{ project.name }}</a></li>
+                            {% endfor %}
+                        </ul>
+                    </div>
+                {% endif %}
+            </div>
+        {% endif %}
+    </div>
+</div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Get URL parameters to set filter values
+        const urlParams = new URLSearchParams(window.location.search);
+        const projectId = urlParams.get('project_id');
+        const status = urlParams.get('status');
+        const dueDate = urlParams.get('due_date');
+        
+        // Set filter values from URL parameters
+        if (projectId) {
+            document.querySelector('#project').value = projectId;
+        }
+        
+        if (status) {
+            document.querySelector('#status').value = status;
+        }
+        
+        if (dueDate) {
+            document.querySelector('#due_date').value = dueDate;
+        }
+    });
+</script>
+{% endblock %}
