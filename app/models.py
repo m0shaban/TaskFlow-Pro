@@ -146,16 +146,3 @@ class Attachment(db.Model):
     project_id = db.Column(db.Integer, db.ForeignKey('project.id'))
     task_id = db.Column(db.Integer, db.ForeignKey('task.id'))
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
-
-@login.user_loader
-def load_user(id):
-    try:
-        return User.query.get(int(id))
-    except Exception as e:
-        user = User()
-        user.id = int(id)
-        user.is_authenticated = True
-        user.is_active = True
-        user.is_anonymous = False
-        user.role = UserRole.USER  # Default role
-        return user

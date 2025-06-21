@@ -8,7 +8,6 @@ from config import Config
 db = SQLAlchemy()
 migrate = Migrate()
 login = LoginManager()
-login.login_view = 'auth.login'
 csrf = CSRFProtect()
 
 def create_app(config_class=Config):
@@ -18,12 +17,18 @@ def create_app(config_class=Config):
     db.init_app(app)
     migrate.init_app(app, db)
     login.init_app(app)
+    login.login_view = 'auth.login'  # Set after init_app
     csrf.init_app(app)  # Initialize CSRF protection
 
     # Make current_app available in templates
     @app.context_processor
     def inject_current_app():
-        return dict(current_app=current_app)
+        return dict(current_app=current_app)    # Import models after app creation to avoid circular imports
+    from app import models
+    
+    # Register user loader after models are imported
+    from app.utils import register_user_loader
+    register_user_loader(login)
 
     # Register auth blueprint
     from app.auth import bp as auth_bp
@@ -48,5 +53,3 @@ def create_app(config_class=Config):
         pass
 
     return app
-
-from app import models
