@@ -1,0 +1,240 @@
+[build-system]
+requires = ["setuptools>=45", "wheel", "setuptools_scm[toml]>=6.2"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "taskflow-pro"
+version = "1.0.0"
+description = "Enterprise-grade project management and task execution platform"
+readme = "README.md"
+license = {file = "LICENSE"}
+authors = [
+    {name = "Mohamed Shaban", email = "m0shaban@gmail.com"},
+]
+maintainers = [
+    {name = "Mohamed Shaban", email = "m0shaban@gmail.com"},
+]
+classifiers = [
+    "Development Status :: 5 - Production/Stable",
+    "Intended Audience :: End Users/Desktop",
+    "Intended Audience :: Developers",
+    "License :: OSI Approved :: MIT License",
+    "Operating System :: OS Independent",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.8",
+    "Programming Language :: Python :: 3.9",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Framework :: Flask",
+    "Topic :: Office/Business :: Scheduling",
+    "Topic :: Software Development :: Libraries :: Application Frameworks",
+]
+keywords = [
+    "project-management",
+    "task-management", 
+    "flask",
+    "enterprise",
+    "workflow",
+    "productivity",
+    "collaboration"
+]
+dependencies = [
+    "Flask>=2.3.2",
+    "Flask-SQLAlchemy>=3.0.5",
+    "Flask-Login>=0.6.2",
+    "Flask-WTF>=1.1.1",
+    "Flask-Migrate>=4.0.4",
+    "Flask-Mail>=0.9.1",
+    "SQLAlchemy>=2.0.15",
+    "WTForms>=3.0.1",
+    "Werkzeug>=2.3.6",
+    "python-dotenv>=1.0.0",
+    "gunicorn>=20.1.0",
+    "psycopg2-binary>=2.9.6",
+]
+requires-python = ">=3.8"
+
+[project.optional-dependencies]
+dev = [
+    "black>=23.0.0",
+    "isort>=5.12.0",
+    "flake8>=6.0.0",
+    "mypy>=1.0.0",
+    "pytest>=7.0.0",
+    "pytest-flask>=1.2.0",
+    "pytest-cov>=4.0.0",
+    "safety>=2.3.0",
+    "bandit>=1.7.0",
+    "pre-commit>=3.0.0",
+]
+test = [
+    "pytest>=7.0.0",
+    "pytest-flask>=1.2.0",
+    "pytest-cov>=4.0.0",
+    "pytest-mock>=3.10.0",
+    "factory-boy>=3.2.0",
+    "faker>=18.0.0",
+]
+docs = [
+    "sphinx>=5.0.0",
+    "sphinx-rtd-theme>=1.2.0",
+    "mkdocs>=1.4.0",
+    "mkdocs-material>=9.0.0",
+]
+security = [
+    "safety>=2.3.0",
+    "bandit>=1.7.0",
+    "semgrep>=1.0.0",
+]
+
+[project.urls]
+Homepage = "https://github.com/m0shaban/TaskFlow-Pro"
+Documentation = "https://github.com/m0shaban/TaskFlow-Pro/blob/main/README.md"
+Repository = "https://github.com/m0shaban/TaskFlow-Pro"
+"Bug Reports" = "https://github.com/m0shaban/TaskFlow-Pro/issues"
+"Feature Requests" = "https://github.com/m0shaban/TaskFlow-Pro/issues"
+"Live Demo" = "https://taskflow-pro-hkcv.onrender.com"
+
+[project.scripts]
+taskflow = "run:main"
+
+# Black Configuration
+[tool.black]
+line-length = 88
+target-version = ['py38', 'py39', 'py310', 'py311']
+include = '\.pyi?$'
+extend-exclude = '''
+/(
+  # directories
+  \.eggs
+  | \.git
+  | \.hg
+  | \.mypy_cache
+  | \.tox
+  | \.venv
+  | build
+  | dist
+  | migrations
+)/
+'''
+
+# isort Configuration
+[tool.isort]
+profile = "black"
+line_length = 88
+multi_line_output = 3
+include_trailing_comma = true
+force_grid_wrap = 0
+use_parentheses = true
+ensure_newline_before_comments = true
+skip_glob = ["*/migrations/*"]
+
+# Flake8 Configuration
+[tool.flake8]
+max-line-length = 88
+extend-ignore = ["E203", "W503", "E501"]
+exclude = [
+    ".git",
+    "__pycache__",
+    "docs/source/conf.py",
+    "old",
+    "build",
+    "dist",
+    "migrations",
+    ".venv",
+    "venv",
+]
+max-complexity = 10
+
+# MyPy Configuration
+[tool.mypy]
+python_version = "3.8"
+warn_return_any = true
+warn_unused_configs = true
+disallow_untyped_defs = true
+disallow_incomplete_defs = true
+check_untyped_defs = true
+disallow_untyped_decorators = true
+no_implicit_optional = true
+warn_redundant_casts = true
+warn_unused_ignores = true
+warn_no_return = true
+warn_unreachable = true
+strict_equality = true
+
+[[tool.mypy.overrides]]
+module = [
+    "flask_sqlalchemy.*",
+    "flask_migrate.*",
+    "flask_login.*",
+    "flask_wtf.*",
+    "wtforms.*",
+    "sqlalchemy.*",
+]
+ignore_missing_imports = true
+
+# Pytest Configuration
+[tool.pytest.ini_options]
+minversion = "6.0"
+addopts = "-ra -q --strict-markers --strict-config"
+testpaths = ["tests"]
+python_files = ["test_*.py", "*_test.py"]
+python_classes = ["Test*"]
+python_functions = ["test_*"]
+markers = [
+    "slow: marks tests as slow (deselect with '-m \"not slow\"')",
+    "integration: marks tests as integration tests",
+    "unit: marks tests as unit tests",
+    "auth: marks tests related to authentication",
+    "api: marks tests related to API endpoints",
+    "db: marks tests related to database operations",
+]
+filterwarnings = [
+    "error",
+    "ignore::UserWarning",
+    "ignore:.*unclosed.*:ResourceWarning",
+]
+
+# Coverage Configuration
+[tool.coverage.run]
+source = ["app"]
+omit = [
+    "*/tests/*",
+    "*/migrations/*",
+    "*/venv/*",
+    "*/build/*",
+    "*/dist/*",
+    "config.py",
+    "wsgi.py",
+    "run.py",
+]
+
+[tool.coverage.report]
+exclude_lines = [
+    "pragma: no cover",
+    "def __repr__",
+    "if self.debug:",
+    "if settings.DEBUG",
+    "raise AssertionError",
+    "raise NotImplementedError",
+    "if 0:",
+    "if __name__ == .__main__.:",
+    "class .*\bProtocol\):",
+    "@(abc\.)?abstractmethod",
+]
+ignore_errors = true
+precision = 2
+show_missing = true
+
+[tool.coverage.html]
+directory = "htmlcov"
+
+# Bandit Configuration
+[tool.bandit]
+exclude_dirs = ["tests", "migrations"]
+skips = ["B101", "B601"]
+
+# Safety Configuration  
+[tool.safety]
+ignore = []
+output = "json"

@@ -1,0 +1,59 @@
+# TaskFlow Pro Development Dependencies
+# هذه الحزم مطلوبة فقط للتطوير والاختبار
+
+# Code Quality & Formatting
+black>=23.0.0              # Code formatter
+isort>=5.12.0              # Import sorter
+flake8>=6.0.0              # Linter
+mypy>=1.0.0                # Type checker
+pre-commit>=3.0.0          # Git hooks
+
+# Testing
+pytest>=7.0.0              # Testing framework
+pytest-flask>=1.2.0        # Flask testing utilities
+pytest-cov>=4.0.0          # Coverage reporting
+pytest-mock>=3.10.0        # Mocking utilities
+factory-boy>=3.2.0         # Test data generation
+faker>=18.0.0              # Fake data generation
+
+# Security
+safety>=2.3.0              # Dependency security scanner
+bandit>=1.7.0              # Security linter
+semgrep>=1.0.0             # Static analysis
+
+# Performance & Profiling
+locust>=2.0.0              # Load testing
+py-spy>=0.3.0              # Python profiler
+memory-profiler>=0.60.0    # Memory profiler
+
+# Documentation
+sphinx>=5.0.0              # Documentation generator
+sphinx-rtd-theme>=1.2.0    # RTD theme
+mkdocs>=1.4.0              # Modern documentation
+mkdocs-material>=9.0.0     # Material theme for MkDocs
+
+# Development Tools
+python-dotenv>=1.0.0       # Environment variables
+watchdog>=3.0.0            # File system monitoring
+ipython>=8.0.0             # Enhanced Python shell
+jupyter>=1.0.0             # Jupyter notebooks
+
+# Database Tools
+alembic>=1.10.0            # Database migrations
+sqlalchemy-utils>=0.40.0   # SQLAlchemy utilities
+psycopg2-binary>=2.9.0     # PostgreSQL adapter
+
+# API Development & Testing
+httpie>=3.0.0              # HTTP client
+requests-mock>=1.10.0      # HTTP request mocking
+postman-to-k6>=0.1.0       # API testing
+
+# Debugging
+pdb++>=0.10.0              # Enhanced debugger
+flask-debugtoolbar>=0.13.0 # Flask debug toolbar
+werkzeug-profiler>=0.1.0   # Request profiler
+
+# Optional: Advanced Development
+redis>=4.5.0               # Redis client (for caching)
+celery>=5.2.0              # Task queue (for async tasks)
+flower>=1.2.0              # Celery monitoring
