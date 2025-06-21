@@ -6,8 +6,13 @@
 
 import os
 import sys
+from dotenv import load_dotenv
 from sqlalchemy import create_engine, text
 from sqlalchemy.exc import SQLAlchemyError
+
+# تحميل متغيرات البيئة من .env
+basedir = os.path.abspath(os.path.dirname(__file__))
+load_dotenv(os.path.join(basedir, '.env'))
 
 def test_database_connection():
     """اختبار الاتصال بقاعدة البيانات"""
@@ -42,12 +47,16 @@ def test_database_connection():
         # إنشاء محرك قاعدة البيانات
         print("🚀 Creating database engine...")
         engine = create_engine(database_url)
-        
-        # اختبار الاتصال
+          # اختبار الاتصال
         print("🔌 Testing connection...")
         with engine.connect() as connection:
             result = connection.execute(text("SELECT 1 as test"))
-            test_value = result.fetchone()[0]
+            row = result.fetchone()
+            if row is None:
+                print("❌ Database test query returned no results")
+                return False
+                
+            test_value = row[0]
             
             if test_value == 1:
                 print("✅ Database connection successful!")
