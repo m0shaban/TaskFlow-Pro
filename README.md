@@ -365,20 +365,23 @@ services:
 ## 📖 Documentation
 
 ### **📚 Core Documentation**
-- **[Technical Documentation](TECHNICAL.md)** - Comprehensive technical guide
-- **[User Guide](docs/user_guide.md)** - End-user manual
-- **[Admin Guide](docs/admin_guide.md)** - Administrative functions
-- **[API Documentation](docs/api_guide.md)** - RESTful API reference
+- **[📖 Technical Documentation](TECHNICAL.md)** - Comprehensive technical architecture guide
+- **[🔌 API Documentation](API.md)** - Complete RESTful API reference
+- **[🔐 Security Guide](SECURITY.md)** - Security best practices and policies
+- **[👤 User Guide](docs/user_guide.md)** - End-user manual and tutorials
+- **[⚙️ Admin Guide](docs/admin_guide.md)** - Administrative functions and setup
 
 ### **🛠️ Development Resources**
-- **[Developer Guide](DEVELOPER.md)** - Development setup and guidelines
-- **[Deployment Guide](DEPLOYMENT.md)** - Multi-platform deployment
-- **[Troubleshooting Guide](TROUBLESHOOTING.md)** - Common issues and solutions
+- **[👨‍💻 Developer Guide](DEVELOPER.md)** - Development setup and guidelines
+- **[🚀 Deployment Guide](DEPLOYMENT.md)** - Multi-platform deployment instructions
+- **[🔧 Troubleshooting Guide](TROUBLESHOOTING.md)** - Common issues and solutions
+- **[🧪 Testing Guide](docs/testing_guide.md)** - Testing strategies and tools
 
 ### **📋 Quick Reference**
-- **[Environment Variables](docs/environment_variables.md)** - Configuration reference
-- **[Database Schema](docs/database_schema.md)** - Data model documentation
-- **[Security Guide](docs/security_guide.md)** - Security best practices
+- **[🌍 Environment Variables](docs/environment_variables.md)** - Configuration reference
+- **[🗄️ Database Schema](docs/database_schema.md)** - Data model documentation
+- **[📊 Performance Guide](docs/performance_guide.md)** - Optimization best practices
+- **[🔄 Migration Guide](docs/migration_guide.md)** - Upgrade and migration procedures
 
 ---
 
