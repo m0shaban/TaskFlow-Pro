@@ -127,14 +127,7 @@ TaskFlow Pro is architected to be a centralized **"Enterprise Operating System."
 
 ### 🖼️ Visual Demo
 
-*(A dynamic GIF showcasing the fluid user experience is essential. It should quickly cycle through: 1. The main dashboard with its key stats. 2. The project list view. 3. A detailed view of a single project with its tasks. 4. An example of a generated report.)*
-
-<div align="center">
-
-![Animation of the TaskFlow Pro application showing dashboards, project management, and reporting features.](https://placehold.co/800x450/0d6efd/FFFFFF/gif?text=Live%20Application%20Demo)
-
-</div>
-
+<a href="https://ibb.co/N2HxHnwQ"><img src="https://i.ibb.co/9HCnC3Rz/Screenshot-875.png" alt="Screenshot-875" border="0"></a>
 ---
 
 ## 📋 Table of Contents
