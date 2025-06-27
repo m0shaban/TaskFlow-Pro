@@ -717,6 +717,6 @@ This project is licensed under the **MIT License** - see the [LICENSE](LICENSE) 
 **Made with ❤️ by [Mohamed Shaban](https://github.com/m0shaban)**
 
 [![Follow on GitHub](https://img.shields.io/github/followers/m0shaban?style=social)](https://github.com/m0shaban)
-[![Follow on Twitter](https://img.shields.io/twitter/follow/m0shaban?style=social)](https://twitter.com/m0shaban)
+[![Follow on Twitter](https://img.shields.io/twitter/follow/m0shaban?style=social)](https://x.com/mshabanai)
 
 </div>
